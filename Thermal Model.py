@@ -4,7 +4,6 @@ Created on Sat Jul  9 17:09:30 2022
 
 @author: vikra
 """
-
 #Enter no of panels
 import numpy as np;
 import scipy.integrate as integrate
@@ -53,17 +52,21 @@ t=0.3;#breadth of plate
 l=0.3;#height of plate
 R=r/l;
 Z=s/r;
-T=t/r;
-y=lambda x:R**2 *( 1-Z**2 - T**2 * x**2 )
-v=lambda x:(1/(Z**2 + T**2 * x**2 * 0.25 )**0.5)
-integfun=lambda x:(Z * v**2)*( 1- (1/np.pi)*(np.arccos( (1+y)/(1-y) ) -
-                                           (1/(2*R))*( ((1-y)**2 + 4* R**2 *
-                                                        np.arccos(v*((1+y)/(1-y))))**0.5  +
-                                        (1+y)* np.arcsin(v) - (np.pi/2) * (1-y) ) ) )
-F12=(T/2*np.pi)*integrate.quad(integfun,0,1)
+T2=t/r;
+def y(x):
+    return R**2 *( 1-Z**2 - T2**2 * x**2 )
+
+def v(x):
+    return (1/pow( (pow(Z,2) + pow(T2,2) * pow(x,2) * 0.25 ),0.5))
+
+def integfun(x):
+    return ((Z * pow(v(x),2))*( 1- (1/(pi))*(np.arccos( (1+y(x))/(1-y(x)) ) - (1/(2*R))*( ( pow((1-y(x)),2) +pow(4* pow(R,2) * np.arccos(v(x)*((1+y(x))/(1-y(x)))),0.5) ) + (1+y(x))* np.arcsin(v(x)) - ((np.pi)/2) * (1-y(x)) ) ) ))
+
+integrated_value,integrated_error= integrate.quad(integfun,0,1)
+F12=(T2/(2*np.pi))*integrated_value
  # Equilibrium Equation: Energy_in=Energy_out
  # epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm/(4*pi*(D[i-1]^2))
-T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (T_robotarm**4) * (epsilon_robotarm/epsilon[i]) ) )**0.25)
+T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (F12*T_robotarm**4) * (epsilon_robotarm/epsilon[i]) ) )**0.25)
 
 #T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (T_robotarm**4) * (epsilon_robotarm/epsilon[i]) )/ (4*pi*(D[i]**2)) )**0.25)
 print('The Equilibrium temperature of Panel '+str(i+1)+' is '+str(T[i])+' Kelvin')
@@ -73,6 +76,4 @@ for i in range(0,N_panel):
       
        # T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (T[i]^4) * (epsilon[i-1]/epsilon[i]) )/ (4*pi*(D[i-1]^2)) )^0.25)
         print('The Equilibrium temperature of Panel'+str(i+1)+'is '+str(T[i]))
-                   
-    
-    
+              
