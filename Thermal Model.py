@@ -26,7 +26,7 @@ Dimensions=[[1,1]]
 # Material | Absorptivity, Emissivity, Heat Capacity (J/g K), Thermal Conductivity (W/m K), Density kg/m^3
 
   #  "Air": None,
-M_p=[[0.28, 0.87, 0.84, 0.81, 2500],[0.28, 0.87, 0.84, 0.81, 2500]] 
+M_p=[[0.27, 0.76, 0.9, 237, 2700]] 
  #   "Aluminium": [0.27, 0.76, 0.9, 237, 2700]  # Clear Anodized Aluminium
 Area_emitting=[]
 Area_absorption=[]
@@ -45,7 +45,7 @@ for i in range(0,N_panel+1):
   epsilon.append(M_p[i][1])
   
 T_robotarm=303
-epsilon_robotarm=0.84;
+epsilon_robotarm=0.96;
 
 #Calculate View Factor
 r=0.075; #radius of robot arm
@@ -80,16 +80,16 @@ for i in range(0,N_panel):
         print('The Equilibrium temperature of Panel'+str(i+1)+'is '+str(T[i]))
               
         
-#Convective heat transfer simulation. Considering room temperature of 25degree Celsius
+#Convective heat transfer simulation. Considering room temperature of 22degree Celsius
 T_conv=[]
-T_room=298;
+T_room=295;
 A=t*l*2;
 h=2.5;
 h_plot=[]
 # Equilibrium Equation: Energy_in=Energy_out
 # epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm+h*A*(T-T_room)
 def convfun(x): 
-    return -epsilon[i]*sigma*Area_emitting[i]*pow(x,4)+alpha[i]*F12*Area_absorption[i]*sigma*pow(T_robotarm,4)*epsilon_robotarm-h*A*(x-T_room)
+    return -epsilon[i]*sigma*Area_emitting[i]*pow(x,4)+1373*0.6*alpha[i]*Area_absorption[i]+alpha[i]*F12*Area_absorption[i]*sigma*pow(T_robotarm,4)*epsilon_robotarm-h*A*(x-T_room)
 while(h<=100):
     Temperature=scipy.optimize.fsolve(convfun,250)
     T_conv.append(Temperature)
