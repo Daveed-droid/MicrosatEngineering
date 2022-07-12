@@ -5,15 +5,17 @@ Created on Sat Jul  9 17:09:30 2022
 @author: vikra
 """
 #Enter no of panels
-import numpy as np;
+import numpy as np
 import scipy.integrate as integrate
+import scipy as scipy
+import matplotlib as mp
 convergence=1
 No_of_panel=1;
 N_panel=No_of_panel-1;
 #Enter distance from Robot arm as array in order[meters].
 pi=np.pi;
 #D=[1]
-
+sigma=5.67*10**(-8)
 #Enter Timestep for iteration
 t=0.1;
 i=0
@@ -43,13 +45,13 @@ for i in range(0,N_panel+1):
   epsilon.append(M_p[i][1])
   
 T_robotarm=303
-epsilon_robotarm=0.8;
-i=0
+epsilon_robotarm=0.84;
+
 #Calculate View Factor
-r=1; #radius of robot arm
-s=1;#distance from cyclinder center
+r=0.075; #radius of robot arm
+s=0.075;#distance from cyclinder center
 t=0.3;#breadth of plate
-l=0.3;#height of plate
+l=0.15;#height of plate
 R=r/l;
 Z=s/r;
 T2=t/r;
@@ -65,7 +67,7 @@ def integfun(x):
 integrated_value,integrated_error= integrate.quad(integfun,0,1)
 F12=(T2/(2*np.pi))*integrated_value
  # Equilibrium Equation: Energy_in=Energy_out
- # epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm/(4*pi*(D[i-1]^2))
+ # epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm
 T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (F12*T_robotarm**4) * (epsilon_robotarm/epsilon[i]) ) )**0.25)
 
 #T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (T_robotarm**4) * (epsilon_robotarm/epsilon[i]) )/ (4*pi*(D[i]**2)) )**0.25)
@@ -77,3 +79,26 @@ for i in range(0,N_panel):
        # T.append(( ( alpha[i] * (Area_absorption[i]/Area_emitting[i]) * (T[i]^4) * (epsilon[i-1]/epsilon[i]) )/ (4*pi*(D[i-1]^2)) )^0.25)
         print('The Equilibrium temperature of Panel'+str(i+1)+'is '+str(T[i]))
               
+        
+#Convective heat transfer simulation. Considering room temperature of 25degree Celsius
+T_conv=[]
+T_room=298;
+A=t*l*2;
+h=2.5;
+h_plot=[]
+# Equilibrium Equation: Energy_in=Energy_out
+# epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm+h*A*(T-T_room)
+def convfun(x): 
+    return -epsilon[i]*sigma*Area_emitting[i]*pow(x,4)+alpha[i]*F12*Area_absorption[i]*sigma*pow(T_robotarm,4)*epsilon_robotarm-h*A*(x-T_room)
+while(h<=100):
+    Temperature=scipy.optimize.fsolve(convfun,250)
+    T_conv.append(Temperature)
+    h_plot.append(h)
+    h=h+1
+    print('Running')
+    
+mp.pyplot.plot(h_plot,T_conv)
+
+    
+    
+
