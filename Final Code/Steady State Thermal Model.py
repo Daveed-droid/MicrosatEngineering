@@ -2,7 +2,7 @@
 """
 Created on Sat Jul  9 17:09:30 2022
 
-@author: vikra
+@author: Vikram
 """
 #Enter no of panels
 import numpy as np
