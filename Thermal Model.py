@@ -27,6 +27,10 @@ Dimensions=[[1,1]]
 
   #  "Air": None,
 M_p=[[0.27, 0.76, 0.9, 237, 2700]] 
+M_p=[[0.25,0.88]] #Glass
+#M_p=[[0.19,0.77]] #Alumium Backed Mylar, emergency blankets
+#M_p=[[0.175,0.725]]#Glass Fiber
+M_p=[[0.15,0.04]]# Al foil
  #   "Aluminium": [0.27, 0.76, 0.9, 237, 2700]  # Clear Anodized Aluminium
 Area_emitting=[]
 Area_absorption=[]
@@ -89,16 +93,21 @@ h_plot=[]
 # Equilibrium Equation: Energy_in=Energy_out
 # epsilon*sigma*Area_emitting*(T^4)=alpha*Area_absorption*sigma*(T_robotarm^4)*epsilon_robot arm+h*A*(T-T_room)
 def convfun(x): 
-    return -epsilon[i]*sigma*Area_emitting[i]*pow(x,4)+1373*0.6*alpha[i]*Area_absorption[i]+alpha[i]*F12*Area_absorption[i]*sigma*pow(T_robotarm,4)*epsilon_robotarm-h*A*(x-T_room)
+    return -epsilon[i]*sigma*Area_emitting[i]*pow(x,4)+1373*0.89*alpha[i]*Area_absorption[i]+alpha[i]*F12*Area_absorption[i]*sigma*pow(T_robotarm,4)*epsilon_robotarm-h*A*(x-T_room)
 while(h<=100):
     Temperature=scipy.optimize.fsolve(convfun,250)
     T_conv.append(Temperature)
     h_plot.append(h)
     h=h+1
-    print('Running')
     
+h=5;
+Temperature2=scipy.optimize.fsolve(convfun,250)    
+print('The Equilibrium temperature of Panel is '+str(Temperature2))   
+
 mp.pyplot.plot(h_plot,T_conv)
 
+mp.pyplot.xlabel('h(W/m2K)')
+mp.pyplot.ylabel('T(K)')
     
     
 
