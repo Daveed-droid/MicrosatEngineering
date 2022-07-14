@@ -10,9 +10,8 @@ import scipy.integrate as integrate
 import scipy as scipy
 import matplotlib as mp
 convergence=1
-No_of_panel=1;
+No_of_panel=1;#Enter No of Panels here
 N_panel=No_of_panel-1;
-#Enter distance from Robot arm as array in order[meters].
 pi=np.pi;
 #D=[1]
 sigma=5.67*10**(-8)
